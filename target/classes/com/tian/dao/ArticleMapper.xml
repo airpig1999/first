@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tian.dao.ArticleMapper">
+
+    <select id="select_all_byaid" resultMap="other">
+    select aid,uid,cid,content,code,title,preface,page_view,publish_time from article where aid=#{aid};
+    </select>
+    <select id="select_not_content" resultMap="other">
+        select aid,uid,cid,title,preface,page_view,publish_time from article;
+    </select>
+    <select id="select_all_by_cid" resultMap="other">
+        select aid,uid,cid,title,preface,page_view,publish_time from article where cid=#{cid};
+    </select>
+    <resultMap id="other" type="Article">
+        <result property="uid" column="uid"></result>
+        <result property="cid" column="cid"></result>
+        <result property="aid" column="aid"></result>
+        <result property="content" column="content"></result>
+        <result property="code" column="code"></result>
+        <result property="title" column="title"></result>
+        <result property="preface" column="preface"></result>
+        <result property="page_view" column="page_view"></result>
+        <result property="publish_time" column="publish_time"></result>
+        <association property="category" column="cid" javaType="Category" select="select_category_bycid"></association>
+        <association property="user" column="uid" javaType="User" select="select_user_byuid"></association>
+        <collection property="comments" column="aid" ofType="Comment" select="select_comment_bycid"></collection>
+    </resultMap>
+
+    <select id="select_comment_bycid" resultType="Comment" resultMap="select_username_byuid">
+        select comment_id,comment_content,comment_time,uid
+        from comment
+        where aid=#{aid};
+    </select>
+
+    <resultMap id="select_username_byuid" type="Comment">
+        <result property="comment_id" column="comment_id"></result>
+        <result property="comment_content" column="comment_content"></result>
+        <result property="comment_time" column="comment_time"></result>
+        <association property="user" column="uid" javaType="User" select="select_user_bycomment_uid"></association>
+    </resultMap>
+
+    <select id="select_user_bycomment_uid" resultType="User">
+        select user_name,uid from user where uid=#{uid};
+    </select>
+
+    <select id="select_user_byuid" resultType="User">
+        select user_name,uid from user where uid=#{uid};
+    </select>
+
+    <select id="select_category_bycid" resultType="Category">
+        select * from article_category where cid=#{cid};
+    </select>
+
+    <insert id="insert_one_article" parameterType="Article">
+        insert into article(uid, content, code, title, preface, publish_time, cid)
+        values (#{article.uid},#{article.content},#{article.code},#{article.title},#{article.preface},#{article.publish_time},#{article.cid});
+    </insert>
+
+    <update id="update_one_article" parameterType="Article">
+        update article
+        set content=#{article.content},code=#{article.code},title=#{article.title},preface=#{article.preface},cid=#{article.cid}
+        where aid=#{article.aid};
+    </update>
+
+    <delete id="delete_one_article" parameterType="int">
+        delete from article where aid=#{aid};
+    </delete>
+
+    <update id="update_one_page_view" parameterType="int">
+        update article
+        set page_view=page_view+1
+        where aid=#{aid};
+    </update>
+
+</mapper>
