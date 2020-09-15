@@ -108,7 +108,7 @@
                         <p>
                             <br />
                         </p>
-                        <p>
+                        <p style="white-space:pre-line">
                             &nbsp;&nbsp;&nbsp;&nbsp;${article.content}
                         </p>
 

@@ -71,4 +71,12 @@ public class mybatistest {
         commentService.insert_one_comment(comment);
     }
 
+    @Test
+    public void test7(){
+        ApplicationContext context =new ClassPathXmlApplicationContext("applicationcontext.xml");
+         ArticleService articleService= (ArticleService) context.getBean("ArticleServiceImpl");
+         System.out.println(articleService.select_all_byaid(3));
+
+    }
+
 }
